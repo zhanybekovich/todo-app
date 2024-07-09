@@ -50,11 +50,14 @@ class TaskController extends Controller
         return new TaskResource($task);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Task $task)
     {
-        // Логика удаления задачи
+        if ($task->user_id !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $task->delete();
+
+        return response()->json(null, 204);
     }
 }
