@@ -30,12 +30,13 @@ class TaskController extends Controller
         return new TaskResource($task);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Task $task)
     {
-        // Логика получения конкретной задачи
+        if ($task->user_id !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        return new TaskResource($task);
     }
 
     /**
