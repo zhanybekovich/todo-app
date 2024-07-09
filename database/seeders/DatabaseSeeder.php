@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         $users = User::factory(3)->create();
 
-        Task::factory(10)
+        Task::factory(250)
             ->recycle($users)
             ->create();
     }
