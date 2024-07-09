@@ -39,12 +39,15 @@ class TaskController extends Controller
         return new TaskResource($task);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        // Логика обновления задачи
+        if ($task->user_id !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $task->update($request->validated());
+
+        return new TaskResource($task);
     }
 
     /**
