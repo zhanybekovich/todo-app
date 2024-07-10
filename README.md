@@ -1,64 +1,212 @@
-# [Backend] тестовое отборочное задание
+# Todo App API
 
-## Описание
+This is a simple API for managing tasks in a todo application. The API allows users to create, read, update, and delete tasks, as well as search for tasks by status and deadline.
 
-Разработать простое приложение для управления задачами с использованием Laravel:
+## Installation
 
--   Создайте модель и миграцию для задачи.
--   У задачи должен быть заголовок, описание, статус, дата создания и Крайний срок (дата в которую она должна быть выполнена).
--   Реализуйте API для создания, чтения, обновления и удаления задач. Учтите, что данные, поступающие в API, могут быть некорректными.
--   Добавьте возможность поиска задач по Крайнему сроку и статусу.
+1. Clone the repository:
 
--   [Simple, fast routing engine](https://laravel.com/docs/routing).
--   [Powerful dependency injection container](https://laravel.com/docs/container).
--   Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
--   Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
--   Database agnostic [schema migrations](https://laravel.com/docs/migrations).
--   [Robust background job processing](https://laravel.com/docs/queues).
--   [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+    ```sh
+    git clone https://github.com/zhanybekovich/todo-app.git
+    cd todo-app
+    ```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+2. Install dependencies:
 
-## Learning Laravel
+    ```sh
+    composer install
+    ```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3. Set up environment variables:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+    ```sh
+    cp .env.example .env
+    php artisan key:generate
+    ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+4. Set up the database:
 
-## Laravel Sponsors
+    ```sh
+    php artisan migrate --seed
+    ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+5. Run the development server:
+    ```sh
+    php artisan serve
+    ```
 
-### Premium Partners
+## API Documentation
 
--   **[Vehikl](https://vehikl.com/)**
--   **[Tighten Co.](https://tighten.co)**
--   **[WebReinvent](https://webreinvent.com/)**
--   **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
--   **[64 Robots](https://64robots.com)**
--   **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
--   **[Cyber-Duck](https://cyber-duck.co.uk)**
--   **[DevSquad](https://devsquad.com/hire-laravel-developers)**
--   **[Jump24](https://jump24.co.uk)**
--   **[Redberry](https://redberry.international/laravel/)**
--   **[Active Logic](https://activelogic.com)**
--   **[byte5](https://byte5.de)**
--   **[OP.GG](https://op.gg)**
+### Authentication
 
-## Contributing
+#### Login
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+-   **URL:** `/api/login`
+-   **Method:** `POST`
+-   **Request Body:**
+    ```json
+    {
+        "email": "user@example.com",
+        "password": "password"
+    }
+    ```
+-   **Response:**
+    ```json
+    {
+        "token": "your-generated-token"
+    }
+    ```
 
-## Code of Conduct
+### Tasks
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### Get All Tasks
 
-## Security Vulnerabilities
+-   **URL:** `/api/tasks`
+-   **Method:** `GET`
+-   **Headers:**
+    ```plaintext
+    Authorization: Bearer your-generated-token
+    ```
+-   **Query Parameters (optional):**
+    -   `status`: Filter tasks by status (e.g., `todo`, `in_progress`, `done`)
+    -   `deadline`: Filter tasks by deadline (format: `YYYY-MM-DD`)
+    -   `page`: Pagination page number
+-   **Response:**
+    ```json
+    {
+        "data": [
+            {
+                "id": 1,
+                "user_id": 1,
+                "title": "Task title",
+                "description": "Task description",
+                "status": "in_progress",
+                "deadline": "2024-07-31",
+                "created_at": "2024-07-10T00:00:00.000000Z",
+                "updated_at": "2024-07-10T00:00:00.000000Z"
+            }
+        ],
+        "links": {
+            "first": "http://your-app-url/api/tasks?page=1",
+            "last": "http://your-app-url/api/tasks?page=2",
+            "prev": null,
+            "next": "http://your-app-url/api/tasks?page=2"
+        },
+        "meta": {
+            "current_page": 1,
+            "from": 1,
+            "last_page": 2,
+            "path": "http://your-app-url/api/tasks",
+            "per_page": 10,
+            "to": 10,
+            "total": 20
+        }
+    }
+    ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+#### Get Task by ID
+
+-   **URL:** `/api/tasks/{id}`
+-   **Method:** `GET`
+-   **Headers:**
+    ```plaintext
+    Authorization: Bearer your-generated-token
+    ```
+-   **Response:**
+    ```json
+    {
+        "id": 1,
+        "user_id": 1,
+        "title": "Task title",
+        "description": "Task description",
+        "status": "in_progress",
+        "deadline": "2024-07-31",
+        "created_at": "2024-07-10T00:00:00.000000Z",
+        "updated_at": "2024-07-10T00:00:00.000000Z"
+    }
+    ```
+
+#### Create a New Task
+
+-   **URL:** `/api/tasks`
+-   **Method:** `POST`
+-   **Headers:**
+    ```plaintext
+    Authorization: Bearer your-generated-token
+    ```
+-   **Request Body:**
+    ```json
+    {
+        "title": "New Task",
+        "description": "Task description",
+        "status": "todo",
+        "deadline": "2024-07-31"
+    }
+    ```
+-   **Response:**
+    ```json
+    {
+        "data": {
+            "id": 1,
+            "user_id": 1,
+            "title": "New Task",
+            "description": "Task description",
+            "status": "todo",
+            "deadline": "2024-07-31",
+            "created_at": "2024-07-10T00:00:00.000000Z",
+            "updated_at": "2024-07-10T00:00:00.000000Z"
+        }
+    }
+    ```
+
+#### Update a Task
+
+-   **URL:** `/api/tasks/{id}`
+-   **Method:** `PUT`
+-   **Headers:**
+    ```plaintext
+    Authorization: Bearer your-generated-token
+    ```
+-   **Request Body:**
+    ```json
+    {
+        "title": "Updated Task",
+        "description": "Updated description",
+        "status": "in_progress",
+        "deadline": "2024-08-01"
+    }
+    ```
+-   **Response:**
+    ```json
+    {
+        "data": {
+            "id": 1,
+            "user_id": 1,
+            "title": "Updated Task",
+            "description": "Updated description",
+            "status": "in_progress",
+            "deadline": "2024-08-01",
+            "created_at": "2024-07-10T00:00:00.000000Z",
+            "updated_at": "2024-07-10T00:00:00.000000Z"
+        }
+    }
+    ```
+
+#### Delete a Task
+
+-   **URL:** `/api/tasks/{id}`
+-   **Method:** `DELETE`
+-   **Headers:**
+    ```plaintext
+    Authorization: Bearer your-generated-token
+    ```
+-   **Response:**
+    ```json
+    {
+        "message": "Task deleted successfully"
+    }
+    ```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
