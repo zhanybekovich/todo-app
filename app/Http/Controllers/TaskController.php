@@ -6,13 +6,25 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tasks = Task::where('user_id', Auth::id())->paginate(10);
+        $query = Task::where('user_id', Auth::id());
+
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('deadline')) {
+            $query->whereDate('deadline', $request->deadline);
+        }
+
+        $tasks = $query->paginate(10);
+
         return TaskResource::collection($tasks);
     }
 
